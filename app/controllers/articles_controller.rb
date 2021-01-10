@@ -1,5 +1,3 @@
-require 'open-uri'
-
 class ArticlesController < ApplicationController
   before_action :set_article, only: [:show, :edit, :update, :destroy]
   before_action :authenticate_user!
@@ -7,12 +5,7 @@ class ArticlesController < ApplicationController
   # GET /articles
   # GET /articles.json
   def index
-    url = 'http://newsapi.org/v2/top-headlines?'\
-      'country=us&'\
-      'apiKey=28cb6243577f4a33b952454034008986'
-    req = open(url)
-    response_body = req.read
-    @remote_articles = JSON.parse(response_body)['articles']
+    @remote_articles = RemoteArticles.get_articles
     @articles = Article.all
     @current_user = current_user
   end
