@@ -1,0 +1,29 @@
+// Place all the styles related to the articles controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: https://sass-lang.com/
+//
+.articles-container {
+  padding: 2px;
+
+  .articles-heading {
+    font-size: 18px;
+  }
+}
+
+.article {
+  display: block;
+  border: 1px solid grey;
+  padding: 8px;
+  margin: 8px 0;
+  width: 400px;
+
+  .user-name {
+    margin-right: 4px;
+  }
+}
+
+.article-textarea {
+  width: 400px;
+  height: 100px;
+  padding: 8px;
+}
