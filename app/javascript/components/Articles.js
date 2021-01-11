@@ -1,39 +1,87 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import { useSelector } from "react-redux";
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+
 import Article from "./Article";
+import {
+    selectArticles,
+    selectRemoteArticles,
+    selectIsLoading
+} from "store/articles/slice";
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 export default function Articles({ user }) {
-  const [articles, setArticles] = useState([]);
-  const [updateArticles, setUpdateArticles] = useState(0);
-  const [newArticle, setNewArticle] = useState("");
-  const [loading, setLoading] = useState(false);
+  const articles = useSelector(selectArticles)
+  const remoteArticles = useSelector(selectRemoteArticles)
+  const loading = useSelector(selectIsLoading);
+  const [value, setValue] = React.useState(0);
 
-  useEffect(() => {
-    axios
-      .get('/articles/', {
-        headers: {
-          'Content-Type': 'application/json',
-           'Accept': 'application/json'
-        }
-      })
-      .then((data) => {
-        setArticles(data.data.articles);
-        setLoading(true);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [updateArticles]);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const articlesComp = articles.map((article) => {
     return <Article article={article} key={article.id} />;
   });
 
-  return (
-    <div className="articles-container">
-      <p className="articles-heading">Articles</p>
-      {articles.length === 0 && <p>There are no articles!</p>}
-      {loading ? articlesComp : <p>Loading</p>}
-    </div>
-  );
+  const remoteArticlesComp = remoteArticles.map((article) => {
+    return <Article article={article} key={article.id} />;
+  });
+
+    return (
+        <div>
+            <Typography variant="h2" gutterBottom>
+                Articles
+            </Typography>
+            {articles.length === 0 && <p>There are no articles!</p>}
+            {loading && (<p>Loading</p>)}
+            {!loading && (
+                <>
+                  <AppBar position="static">
+                    <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                      <Tab label="Articles" {...a11yProps(0)} />
+                      <Tab label="Remote Articles" {...a11yProps(1)} />
+                    </Tabs>
+                  </AppBar>
+                  <TabPanel value={value} index={0}>
+                    {articlesComp}
+                  </TabPanel>
+                  <TabPanel value={value} index={1}>
+                    {remoteArticlesComp}
+                  </TabPanel>
+                </>
+            )}
+        </div>
+    );
 }
