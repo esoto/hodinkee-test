@@ -6,6 +6,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 
 import Article from "./Article";
 import {
@@ -64,18 +65,29 @@ export default function Articles({ user }) {
             <Typography variant="h2" gutterBottom>
                 Articles
             </Typography>
-            {articles.length === 0 && <p>There are no articles!</p>}
-            {loading && (<p>Loading</p>)}
             {!loading && (
                 <>
                   <AppBar position="static">
-                    <Tabs value={value} onChange={handleChange} aria-label="simple tabs example">
+                    <Tabs
+                      value={value}
+                      onChange={handleChange}
+                      aria-label="simple tabs example"
+                      centered
+                    >
                       <Tab label="Articles" {...a11yProps(0)} />
                       <Tab label="Remote Articles" {...a11yProps(1)} />
                     </Tabs>
                   </AppBar>
                   <TabPanel value={value} index={0}>
-                    {articlesComp}
+                    <Grid container spacing={2}>
+                      <Grid item xs={12}>
+                        <Button variant="contained" onClick={() => window.location = "/articles/new"}>Create Article</Button>
+                      </Grid>
+                      <Grid item xs={12}>
+                        {loading && (<p>Loading</p>)}
+                        {articlesComp}
+                      </Grid>
+                    </Grid>
                   </TabPanel>
                   <TabPanel value={value} index={1}>
                     {remoteArticlesComp}
